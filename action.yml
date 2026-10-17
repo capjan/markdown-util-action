@@ -1,0 +1,63 @@
+name: MarkdownUtil GitHub Pages
+description: Render Markdown documentation with MarkdownUtil and deploy it to GitHub Pages.
+
+inputs:
+  docs-path:
+    description: Folder containing Markdown documentation.
+    required: false
+    default: Docs
+  output-path:
+    description: Folder for the generated site.
+    required: false
+    default: site
+  edit-page-root:
+    description: Optional URL to the repository folder where the Markdown files can be edited.
+    required: false
+    default: ''
+
+outputs:
+  page_url:
+    description: URL of the deployed GitHub Pages site.
+    value: ${{ steps.deploy.outputs.page_url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Check out repository
+      uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v6
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Install MarkdownUtil
+      run: dotnet tool install MarkdownUtil --tool-path "$RUNNER_TEMP/markdownutil-tools"
+      shell: bash
+
+    - name: Render documentation
+      run: |
+        if [[ -n "$EDIT_PAGE_ROOT" ]]; then
+          "$RUNNER_TEMP/markdownutil-tools/mdu" render "$DOCS_PATH" "$OUTPUT_PATH" --editPageRoot "$EDIT_PAGE_ROOT"
+        else
+          "$RUNNER_TEMP/markdownutil-tools/mdu" render "$DOCS_PATH" "$OUTPUT_PATH"
+        fi
+      shell: bash
+      env:
+        DOCS_PATH: ${{ inputs.docs-path }}
+        OUTPUT_PATH: ${{ inputs.output-path }}
+        EDIT_PAGE_ROOT: ${{ inputs.edit-page-root }}
+
+    - name: Configure GitHub Pages
+      uses: actions/configure-pages@v6
+
+    - name: Upload site artifact
+      uses: actions/upload-pages-artifact@v5
+      with:
+        path: ${{ inputs.output-path }}
+
+    - name: Deploy to GitHub Pages
+      id: deploy
+      uses: actions/deploy-pages@v5
