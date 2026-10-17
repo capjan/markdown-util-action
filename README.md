@@ -13,27 +13,19 @@ name: Publish docs
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-concurrency:
-  group: pages
-  cancel-in-progress: false
-
 jobs:
   publish:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.publish.outputs.page_url }}
     steps:
-      - name: Publish
-        id: publish
-        uses: capjan/markdown-util-action@v1
+      - uses: capjan/markdown-util-action@v1
 ```
 
 The action checks out the repository, installs .NET 10 and MarkdownUtil, renders `docs` to `site`, and deploys the result. Set `docs-path` if your Markdown files are in a different folder. For example, use `Docs` for a capitalized folder:
