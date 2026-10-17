@@ -36,18 +36,18 @@ jobs:
         uses: capjan/markdown-util-action@v1
 ```
 
-The action checks out the repository, installs .NET 10 and MarkdownUtil, renders `Docs` to `site`, and deploys the result. Set `docs-path` if your Markdown files are in a different folder:
+The action checks out the repository, installs .NET 10 and MarkdownUtil, renders `docs` to `site`, and deploys the result. Set `docs-path` if your Markdown files are in a different folder. For example, use `Docs` for a capitalized folder:
 
 ```yaml
         with:
-          docs-path: docs
+          docs-path: Docs
 ```
 
 ## Inputs
 
 | Input | Default | Description |
 | --- | --- | --- |
-| `docs-path` | `Docs` | Folder containing Markdown documentation. |
+| `docs-path` | `docs` | Folder containing Markdown documentation. |
 | `output-path` | `site` | Folder for the generated site. |
 | `edit-page-root` | empty | Optional URL to the repository folder where the Markdown files can be edited. |
 
