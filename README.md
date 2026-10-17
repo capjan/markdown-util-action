@@ -13,6 +13,8 @@ name: Publish docs
 on:
   push:
     branches: [main]
+    paths:
+      - 'docs/**'
 
 permissions:
   contents: read
@@ -28,7 +30,7 @@ jobs:
       - uses: capjan/markdown-util-action@v1
 ```
 
-The action checks out the repository, installs .NET 10 and MarkdownUtil, renders `docs` to `site`, and deploys the result. Set `docs-path` if your Markdown files are in a different folder. For example, use `Docs` for a capitalized folder:
+The workflow runs only when files under `docs/` change. The action checks out the repository, installs .NET 10 and MarkdownUtil, renders `docs` to `site`, and deploys the result. If your folder is named `Docs`, change the path filter to `Docs/**` and set the action input:
 
 ```yaml
         with:
