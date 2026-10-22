@@ -1,6 +1,6 @@
-# MarkdownUtil GitHub Pages Action
+# mdu
 
-Render Markdown documentation with [MarkdownUtil](https://github.com/capjan/markdown-util) and publish it to GitHub Pages.
+GitHub Pages action to render Markdown documentation with [MDU](https://github.com/capjan/markdown-util) and publish it.
 
 ## Quick start
 
@@ -27,15 +27,17 @@ jobs:
     environment:
       name: github-pages
     steps:
-      - uses: capjan/markdown-util-action@v1
+      - uses: capjan/mdu-action@v1
 ```
 
-The workflow runs only when files under `docs/` change. The action checks out the repository, installs .NET 10 and MarkdownUtil, renders `docs` to `site`, and deploys the result. If your folder is named `Docs`, change the path filter to `Docs/**` and set the action input:
+The workflow runs only when files under `docs/` change. The action checks out the repository, renders `docs` to `site` with the pinned MDU Docker image, and deploys the result. If your folder is named `Docs`, change the path filter to `Docs/**` and set the action input:
 
 ```yaml
         with:
           docs-path: Docs
 ```
+
+The job must run on a Linux runner with Docker installed. GitHub-hosted `ubuntu-latest` runners meet this requirement.
 
 ## Inputs
 
@@ -44,5 +46,6 @@ The workflow runs only when files under `docs/` change. The action checks out th
 | `docs-path` | `docs` | Folder containing Markdown documentation. |
 | `output-path` | `site` | Folder for the generated site. |
 | `edit-page-root` | empty | Optional URL to the repository folder where the Markdown files can be edited. |
+| `mdu-version` | `5.1.0` | MDU Docker image tag to use. |
 
 The action returns the deployed site URL as the `page_url` output.
