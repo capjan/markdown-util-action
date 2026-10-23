@@ -1,0 +1,45 @@
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    name: Render (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Render fixture with edit link
+        run: bash scripts/render.sh
+        env:
+          DOCS_PATH: tests/fixtures/docs with spaces
+          OUTPUT_PATH: test output with edit link
+          EDIT_PAGE_ROOT: https://example.com/repo/edit/main/docs
+          MDU_VERSION: 5.1.0
+
+      - name: Render fixture without edit link
+        run: bash scripts/render.sh
+        env:
+          DOCS_PATH: tests/fixtures/docs with spaces
+          OUTPUT_PATH: test output without edit link
+          MDU_VERSION: 5.1.0
+
+      - name: Verify rendered output
+        run: |
+          test -f 'test output with edit link/index.html'
+          grep -Fq 'Docker action smoke page' 'test output with edit link/index.html'
+          grep -Fq 'https://example.com/repo/edit/main/docs/README.md' 'test output with edit link/index.html'
+          test -f 'test output without edit link/index.html'
+          grep -Fq 'Docker action smoke page' 'test output without edit link/index.html'
+          ! grep -Fq 'page-edit-link' 'test output without edit link/index.html'
